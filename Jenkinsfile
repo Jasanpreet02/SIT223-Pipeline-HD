@@ -28,7 +28,7 @@ pipeline {
         stage('Deploy') {
             steps {
                 bat 'docker rm -f staging-app || exit 0'
-                bat 'docker run -d -p 8081:80 --name staging-app jasan-media-app'
+                bat 'docker run -d -p 8081:3000 --name staging-app jasan-media-app'
             }
         }
         stage('Release') {
