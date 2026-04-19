@@ -20,8 +20,9 @@ pipeline {
         }
         stage('Security') {
             steps {
-                // This runs the audit and ensures the pipeline continues even if risks are found
-                bat 'docker run --rm jasan-media-app npm audit || echo "Vulnerabilities found but continuing to staging"'
+                catchError(buildResult: 'SUCCESS', stageResult: 'UNSTABLE') {
+                    bat 'docker run --rm jasan-media-app npm audit'
+                }
             }
         }
         stage('Deploy') {
