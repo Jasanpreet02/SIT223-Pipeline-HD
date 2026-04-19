@@ -19,12 +19,12 @@ pipeline {
             }
         }
         stage('Security') {
-            steps {
-                catchError(buildResult: 'SUCCESS', stageResult: 'UNSTABLE') {
-                    bat 'docker run --rm jasan-media-app npm audit'
-                }
-            }
+    steps {
+        catchError(buildResult: 'UNSTABLE', stageResult: 'UNSTABLE') {
+            bat 'docker run --rm jasan-media-app npm audit'
         }
+    }
+}
         stage('Deploy') {
             steps {
                 bat 'docker rm -f staging-app || exit 0'
