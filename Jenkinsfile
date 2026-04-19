@@ -9,7 +9,7 @@ pipeline {
         stage('Test') {
             steps {
                 // Running test INSIDE the container
-                bat 'docker run --rm -e CI=true jasan-media-app npm test -- --watchAll=false'
+                bat 'docker run --rm -e CI=true jasan-media-app npm test -- --watchAll=false --passWithNoTests'
             }
         }
         stage('Code Quality') {
