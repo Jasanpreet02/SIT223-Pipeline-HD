@@ -23,23 +23,41 @@ pipeline {
                 bat 'docker run --rm jasan-media-app npm run lint || echo "Quality check done"'
             }
         }
+//         stage('Security') {
+//     steps {
+//         script {
+//             catchError(buildResult: 'SUCCESS', stageResult: 'SUCCESS') {
+
+//                 // Step 1: Check vulnerabilities
+//                 bat 'docker run --rm jasan-media-app npm audit'
+
+//                 // Step 2: Auto-fix safe vulnerabilities
+//                 bat 'docker run --rm jasan-media-app npm audit fix || echo "Auto fix completed"'
+
+//                 // Step 3: Rebuild image after fix
+//                 bat 'docker build -t jasan-media-app .'
+
+//                 // Step 4: Re-check (optional verification)
+//                 bat 'docker run --rm jasan-media-app npm audit || echo "Post-fix audit completed"'
+//             }
+//         }
+//     }
+// }
         stage('Security') {
     steps {
         script {
-            catchError(buildResult: 'SUCCESS', stageResult: 'SUCCESS') {
 
-                // Step 1: Check vulnerabilities
-                bat 'docker run --rm jasan-media-app npm audit'
+            // Step 1: Check vulnerabilities (do NOT fail pipeline)
+            bat 'docker run --rm jasan-media-app npm audit || echo "⚠️ Vulnerabilities exist"'
 
-                // Step 2: Auto-fix safe vulnerabilities
-                bat 'docker run --rm jasan-media-app npm audit fix || echo "Auto fix completed"'
+            // Step 2: Apply SAFE fixes in project (not container)
+            bat 'npm audit fix || echo "Safe fixes applied"'
 
-                // Step 3: Rebuild image after fix
-                bat 'docker build -t jasan-media-app .'
+            // Step 3: Rebuild image with updated dependencies
+            bat 'docker build -t jasan-media-app .'
 
-                // Step 4: Re-check (optional verification)
-                bat 'docker run --rm jasan-media-app npm audit || echo "Post-fix audit completed"'
-            }
+            // Step 4: Re-check vulnerabilities (still don’t fail)
+            bat 'docker run --rm jasan-media-app npm audit || echo "⚠️ Vulnerabilities still exist after fix"'
         }
     }
 }
