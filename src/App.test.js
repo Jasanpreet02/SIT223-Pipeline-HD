@@ -9,7 +9,7 @@ test('Test 1: App renders without crashing', () => {
 
 test('Test 2: Check page loads', () => {
   render(<App />);
-  expect(screen.getByText(/./)).toBeInTheDocument();
+  expect(screen.getByPlaceholderText(/Search/i)).toBeInTheDocument();
 });
 
 test('Test 3: Check buttons exist', () => {
@@ -32,7 +32,7 @@ test('Test 5: Check app does not crash on re-render', () => {
 
 test('Test 6: Check DOM is loaded', () => {
   render(<App />);
-  expect(screen.getByText(/./)).toBeInTheDocument();
+  expect(screen.getByPlaceholderText(/Search/i)).toBeInTheDocument();
 });
 
 test('Test 7: Check for headings', () => {
