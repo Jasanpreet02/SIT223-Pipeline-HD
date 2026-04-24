@@ -56,11 +56,18 @@ pipeline {
                 bat 'docker tag jasan-media-app jasan-media-app:v1.0'
             }
         }
-        stage('Monitoring') {
-            steps {
-        // This ensures the pipeline finishes as SUCCESS even if curl is finicky
-        catchError(buildResult: 'SUCCESS', stageResult: 'SUCCESS') {
-            bat 'curl -s http://localhost:8081 || echo App_is_live'
+//         stage('Monitoring') {
+//             steps {
+//         // This ensures the pipeline finishes as SUCCESS even if curl is finicky
+//         catchError(buildResult: 'SUCCESS', stageResult: 'SUCCESS') {
+//             bat 'curl -s http://localhost:8081 || echo App_is_live'
+//         }
+//     }
+// }
+           stage('Monitoring') {
+    steps {
+        script {
+            bat 'curl -f http://localhost:8081 || exit 1'
         }
     }
 }
