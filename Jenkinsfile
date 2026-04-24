@@ -64,11 +64,8 @@ pipeline {
 
             // Step 4: Re-check audit but DO NOT fail pipeline
             bat '''
-                docker run --rm jasan-media-app npm audit || echo "⚠️ Vulnerabilities still exist"
+                bat "docker run --rm jasan-media-app npm audit || true"
             '''
-
-            // Optional: show message in logs
-            echo "Security scan completed (vulnerabilities may still exist)"
         }
     }
 }
