@@ -43,29 +43,18 @@ pipeline {
 //         }
 //     }
 // }
-        stage('Security') {
+       stage('Security') {
     steps {
         script {
+            echo "Running security scan..."
 
-            // Step 1: Run audit but DO NOT fail pipeline
-            bat '''
-                docker run --rm jasan-media-app npm audit || exit 0
-            '''
+            bat 'docker run --rm jasan-media-app npm audit || exit 0'
 
-            // Step 2: Apply safe fixes (inside container workflow safe way)
-            bat '''
-                docker run --rm jasan-media-app npm audit fix || exit 0
-            '''
+            echo "Applying safe fixes (non-blocking)..."
+            bat 'docker run --rm jasan-media-app npm audit fix || exit 0'
 
-            // Step 3: Rebuild image after fixes
-            bat '''
-                docker build -t jasan-media-app .
-            '''
-
-            // Step 4: Re-check audit but DO NOT fail pipeline
-            bat '''
-                bat "docker run --rm jasan-media-app npm audit || true"
-            '''
+            echo "Rebuilding image after dependency updates..."
+            bat 'docker build -t jasan-media-app .'
         }
     }
 }
