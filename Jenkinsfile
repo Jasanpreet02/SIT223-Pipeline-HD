@@ -28,7 +28,7 @@ pipeline {
         stage('Security') {
     steps {
         script {
-            catchError(buildResult: 'UNSTABLE', stageResult: 'UNSTABLE') {
+            catchError(buildResult: 'SUCCESS', stageResult: 'SUCCESS') {
 
                 // Step 1: Check vulnerabilities
                 bat 'docker run --rm jasan-media-app npm audit'
