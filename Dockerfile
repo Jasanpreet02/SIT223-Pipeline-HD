@@ -16,8 +16,7 @@ COPY . .
 # Build the React app
 RUN npm run build
 
-# Expose the port that the app will run on (adjust if needed)
-EXPOSE 3000
 
-# Define the command to start the app
-CMD ["npm", "start"]
+RUN npm install -g serve
+
+CMD ["serve", "-s", "build", "-l", "3000"]
