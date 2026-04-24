@@ -47,17 +47,25 @@ pipeline {
     steps {
         script {
 
-            // Step 1: Check vulnerabilities (do NOT fail pipeline)
-            bat 'docker run --rm jasan-media-app npm audit || echo "⚠️ Vulnerabilities exist"'
+            // Step 1: Show vulnerabilities (DO NOT fail pipeline)
+            bat '''
+            docker run --rm jasan-media-app npm audit || echo "⚠️ Vulnerabilities detected"
+            '''
 
-            // Step 2: Apply SAFE fixes in project (not container)
-            bat 'npm audit fix || echo "Safe fixes applied"'
+            // Step 2: Try safe fixes INSIDE container build context (important)
+            bat '''
+            docker run --rm jasan-media-app npm audit fix || echo "⚠️ Safe fix attempted"
+            '''
 
-            // Step 3: Rebuild image with updated dependencies
-            bat 'docker build -t jasan-media-app .'
+            // Step 3: Rebuild image after fix
+            bat '''
+            docker build --no-cache -t jasan-media-app .
+            '''
 
-            // Step 4: Re-check vulnerabilities (still don’t fail)
-            bat 'docker run --rm jasan-media-app npm audit || echo "⚠️ Vulnerabilities still exist after fix"'
+            // Step 4: Re-check vulnerabilities (still allow pass)
+            bat '''
+            docker run --rm jasan-media-app npm audit || echo "⚠️ Vulnerabilities still exist"
+            '''
         }
     }
 }
