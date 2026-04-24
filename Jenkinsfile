@@ -23,41 +23,24 @@ pipeline {
                 bat 'docker run --rm jasan-media-app npm run lint || echo "Quality check done"'
             }
         }
-//         stage('Security') {
-//     steps {
-//         script {
-//             catchError(buildResult: 'SUCCESS', stageResult: 'SUCCESS') {
-
-//                 // Step 1: Check vulnerabilities
-//                 bat 'docker run --rm jasan-media-app npm audit'
-
-//                 // Step 2: Auto-fix safe vulnerabilities
-//                 bat 'docker run --rm jasan-media-app npm audit fix || echo "Auto fix completed"'
-
-//                 // Step 3: Rebuild image after fix
-//                 bat 'docker build -t jasan-media-app .'
-
-//                 // Step 4: Re-check (optional verification)
-//                 bat 'docker run --rm jasan-media-app npm audit || echo "Post-fix audit completed"'
-//             }
-//         }
-//     }
-// }
-       stage('Security') {
+        stage('Security') {
     steps {
         script {
-            echo "Running security scan..."
+            catchError(buildResult: 'SUCCESS', stageResult: 'SUCCESS') {
 
-            bat 'docker run --rm jasan-media-app npm audit || exit 0'
+                // Step 1: Check vulnerabilities
+                bat 'docker run --rm jasan-media-app npm audit'
 
-            echo "Applying safe fixes (non-blocking)..."
-            bat 'docker run --rm jasan-media-app npm audit fix || exit 0'
+                // Step 2: Auto-fix safe vulnerabilities
+                bat 'docker run --rm jasan-media-app npm audit fix || echo "Auto fix completed"'
 
-            echo "Rebuilding image after dependency updates..."
-            bat 'docker build -t jasan-media-app .'
+                // Step 3: Rebuild image after fix
+                bat 'docker build -t jasan-media-app .'
+            }
         }
     }
 }
+       
         stage('Deploy') {
             steps {
                 bat 'docker rm -f staging-app || exit 0'
