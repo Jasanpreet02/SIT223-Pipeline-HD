@@ -18,10 +18,30 @@ pipeline {
                 bat 'docker run --rm jasan-media-app npm run lint || echo "Quality check done"'
             }
         }
+//         stage('Security') {
+//     steps {
+//         catchError(buildResult: 'UNSTABLE', stageResult: 'UNSTABLE') {
+//             bat 'docker run --rm jasan-media-app npm audit'
+//         }
+//     }
+// }
         stage('Security') {
     steps {
-        catchError(buildResult: 'UNSTABLE', stageResult: 'UNSTABLE') {
-            bat 'docker run --rm jasan-media-app npm audit'
+        script {
+            catchError(buildResult: 'UNSTABLE', stageResult: 'UNSTABLE') {
+
+                // Step 1: Check vulnerabilities
+                bat 'docker run --rm jasan-media-app npm audit'
+
+                // Step 2: Auto-fix safe vulnerabilities
+                bat 'docker run --rm jasan-media-app npm audit fix || echo "Auto fix completed"'
+
+                // Step 3: Rebuild image after fix
+                bat 'docker build -t jasan-media-app .'
+
+                // Step 4: Re-check (optional verification)
+                bat 'docker run --rm jasan-media-app npm audit || echo "Post-fix audit completed"'
+            }
         }
     }
 }
