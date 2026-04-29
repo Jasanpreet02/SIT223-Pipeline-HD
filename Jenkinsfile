@@ -66,7 +66,6 @@ pipeline {
     agent any
 
     environment {
-        // 🔐 Must exist in Jenkins credentials
         RAPID_API_KEY = credentials('rapidapi-key')
     }
 
@@ -103,7 +102,7 @@ pipeline {
 
                         bat 'docker run --rm jasan-media-app npm audit fix || echo "Auto fix completed"'
 
-                        // 🔁 rebuild WITH API key again
+                        // rebuild WITH API key again
                         bat """
                         docker build --no-cache ^
                         --build-arg REACT_APP_RAPID_API_KEY=%RAPID_API_KEY% ^
